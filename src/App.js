@@ -2,6 +2,7 @@ import styled from "styled-components";
 import MovieComponent from "./components/MovieComponent";
 import { useState } from "react";
 import axios from "axios";
+import MovieInfoComponent from "./components/MovieInfoComponent";
 
 const Container = styled.div`
   display: flex;
@@ -75,6 +76,7 @@ function App() {
   const [searchQuery, updateSearchQuery] = useState();
   const [timeoutId, updateTimeoutId] = useState();
   const [movieList, updateMovieList] = useState([]);
+  const [selectedMovie, onMovieSelect] = useState();
 
   const fetchData = async (searchString) => {
     const response = await axios.get(`https://www.omdbapi.com/?s=${searchString}}&apikey=${API_KEY}`);
@@ -87,6 +89,13 @@ function App() {
     const timeout = setTimeout(() => fetchData(event.target.value), 500);
     updateTimeoutId(timeout);
   }
+
+  const Placeholder = styled.img`
+    width: 120x;
+    height: 120px;
+    margin: 150px;
+    opacity: 50%;
+  `;
 
   return (
     <Container>
@@ -103,10 +112,11 @@ function App() {
             onChange={onTextChange} />
         </SearchBox>
       </Header>
+      {selectedMovie && <MovieInfoComponent selectedMovie={selectedMovie} onMovieSelect={onMovieSelect} /> }
       <MovieListContainer>
         {movieList.length 
-        ? movieList.map((movie, index) =><MovieComponent key={index} movie={movie}/>) 
-        : "No Movie Search"}
+        ? movieList.map((movie, index) =><MovieComponent key={index} movie={movie} onMovieSelect={onMovieSelect}/>) 
+        : <Placeholder src="/movie-icon.svg" />}
       </MovieListContainer>
     </Container>
   );
